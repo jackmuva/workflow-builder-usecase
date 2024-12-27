@@ -1,0 +1,6 @@
+.DS_Store
+.devcontainer/
+.env
+.idea/
+.next/
+node_modules/
