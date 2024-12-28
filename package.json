@@ -19,6 +19,7 @@
     "@radix-ui/react-tabs": "^1.1.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@useparagon/connect": "^1.0.17",
+    "@xyflow/react": "^12.3.6",
     "ajv": "^8.12.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

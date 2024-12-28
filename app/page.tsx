@@ -7,6 +7,7 @@ import { getSession } from "@/app/components/ui/integration/auth-action";
 import useParagon from "@/app/hooks/useParagon";
 import { Footer } from "@/app/components/Footer";
 import { ToastContainer } from "react-toastify";
+import ReactflowPlayground from "./components/ui/reactflow/reactflow-playground";
 
 export default function Home() {
     const [intgDropdown, setIntgDropdown] = useState<boolean>(false);
@@ -69,7 +70,7 @@ export default function Home() {
                 <Header toggleDown={intgDropdown} toggle={toggleDropdown} email={user.email} />
                 {intgDropdown && <Integrations user={user} />}
                 {user.allowed && user.email &&
-                    <div>hi</div>
+                    <ReactflowPlayground />
                 }
                 {user.email && !user.allowed &&
                     <div className="h-[65vh] flex flex-col justify-center items-center space-y-4">

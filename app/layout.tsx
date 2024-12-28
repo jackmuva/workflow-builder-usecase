@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "./markdown.css";
-import { ToastContainer } from "react-toastify";
 import ToastProvider from "@/app/components/ui/toast/toast-provider";
+import '@xyflow/react/dist/style.css';
+import { ReactFlowProvider } from "@xyflow/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Parato Demo",
-  description: "Built with Paragon and LlamaIndex",
+  title: "ParaWorkflow",
+  description: "Embedded workflow builder built with Paragon",
 };
 
 export default function RootLayout({
@@ -20,11 +21,13 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-        <body className={inter.className}>
+      <body className={inter.className}>
+        <ReactFlowProvider>
           <ToastProvider>
-             {children}
+            {children}
           </ToastProvider>
-        </body>
+        </ReactFlowProvider>
+      </body>
     </html>
   );
 }
