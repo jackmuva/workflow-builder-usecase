@@ -65,7 +65,7 @@ export default function Home() {
     }
     console.log(user);
     return (
-        <main className="pt-10 flex justify-center items-center background-gradient">
+        <main className="pt-5 flex justify-center items-center background-gradient">
             <div className="flex-col space-y-2 lg:space-y-10 w-[90%] lg:w-[60rem]">
                 <Header toggleDown={intgDropdown} toggle={toggleDropdown} email={user.email} />
                 {intgDropdown && <Integrations user={user} />}
@@ -99,7 +99,6 @@ export default function Home() {
                     </div>
                 }
             </div>
-            {user.email && <Footer></Footer>}
         </main>
     );
 }

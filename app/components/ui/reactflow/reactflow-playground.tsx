@@ -1,8 +1,10 @@
-import { ReactFlow, Controls, Background } from '@xyflow/react';
+import { ReactFlow, Controls, Background, applyEdgeChanges, applyNodeChanges, addEdge } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { useState, useCallback, useEffect } from 'react';
+import { ReactflowSidebar } from './reactflow-sidebar';
 
 function ReactflowPlayground() {
-	const nodes = [
+	const initialNodes = [
 		{
 			id: '1',
 			data: { label: 'Hello' },
@@ -16,13 +18,41 @@ function ReactflowPlayground() {
 		},
 	];
 
+	const initialEdges = [{ id: '1-2', source: '1', target: '2' }];
+
+	const [nodes, setNodes] = useState<Array<any>>(initialNodes);
+	const [edges, setEdges] = useState(initialEdges);
+
+	useEffect(() => {
+		if (localStorage.getItem("nodes") !== null && localStorage.getItem("edges") !== null) {
+			setNodes(JSON.parse(localStorage.getItem("nodes")));
+			setEdges(JSON.parse(localStorage.getItem("edges")));
+		}
+	}, []);
+
+	const onNodesChange = useCallback(
+		(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		[],
+	);
+	const onEdgesChange = useCallback(
+		(changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+		[],
+	);
+	const onConnect = useCallback(
+		(params) => setEdges((eds) => addEdge(params, eds)),
+		[],
+	);
+
 	return (
-		<div className='h-full border-2 min-h-[500px] bg-stone-50 rounded-lg shadow-2xl' style={{ height: '100%' }}>
-			<ReactFlow className='min-h-[500px] h-full w-full' nodes={nodes} fitView>
+		<div className='flex border-2 bg-stone-50 w-screen min-h-screen z-0 fixed top-20 left-0 '>
+			<ReactFlow className='min-h-screen h-full w-full basis-4/5'
+				nodes={nodes} edges={edges} onConnect={onConnect}
+				onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}>
 				<Background />
 				<Controls />
 			</ReactFlow>
-		</div>
+			<ReactflowSidebar nodes={nodes} setNodes={setNodes} edges={edges}></ReactflowSidebar>
+		</div >
 	);
 }
 
