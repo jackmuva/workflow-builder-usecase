@@ -1,7 +1,8 @@
 import { ReactFlow, Controls, Background, applyEdgeChanges, applyNodeChanges, addEdge } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { ReactflowSidebar } from './reactflow-sidebar';
+import { SalesforceNode } from './nodes/SalesforceNode';
 
 function ReactflowPlayground() {
 	const initialNodes = [
@@ -15,6 +16,7 @@ function ReactflowPlayground() {
 			id: '2',
 			data: { label: 'World' },
 			position: { x: 100, y: 100 },
+			type: 'salesforceNode'
 		},
 	];
 
@@ -25,21 +27,23 @@ function ReactflowPlayground() {
 
 	useEffect(() => {
 		if (localStorage.getItem("nodes") !== null && localStorage.getItem("edges") !== null) {
-			setNodes(JSON.parse(localStorage.getItem("nodes")));
-			setEdges(JSON.parse(localStorage.getItem("edges")));
+			setNodes(JSON.parse(localStorage.getItem("nodes") ?? ""));
+			setEdges(JSON.parse(localStorage.getItem("edges") ?? ""));
 		}
 	}, []);
 
+
+	const nodeTypes = useMemo(() => ({ salesforceNode: SalesforceNode }), []);
 	const onNodesChange = useCallback(
-		(changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		(changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
 		[],
 	);
 	const onEdgesChange = useCallback(
-		(changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+		(changes: any) => setEdges((eds) => applyEdgeChanges(changes, eds)),
 		[],
 	);
 	const onConnect = useCallback(
-		(params) => setEdges((eds) => addEdge(params, eds)),
+		(params: any) => setEdges((eds) => addEdge(params, eds)),
 		[],
 	);
 
@@ -47,7 +51,8 @@ function ReactflowPlayground() {
 		<div className='flex border-2 bg-stone-50 w-screen min-h-screen z-0 fixed top-20 left-0 '>
 			<ReactFlow className='min-h-screen h-full w-full basis-4/5'
 				nodes={nodes} edges={edges} onConnect={onConnect}
-				onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}>
+				onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}
+				nodeTypes={nodeTypes}>
 				<Background />
 				<Controls />
 			</ReactFlow>
