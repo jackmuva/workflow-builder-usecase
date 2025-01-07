@@ -2,11 +2,7 @@
 import Header from "@/app/components/header";
 import React, { useEffect, useState } from "react";
 import Integrations from "@/app/components/ui/integration/integrations";
-import { AuthenticatedConnectUser } from "@useparagon/connect";
 import { getSession } from "@/app/components/ui/integration/auth-action";
-import useParagon from "@/app/hooks/useParagon";
-import { Footer } from "@/app/components/Footer";
-import { ToastContainer } from "react-toastify";
 import ReactflowPlayground from "./components/ui/reactflow/reactflow-playground";
 
 export default function Home() {
@@ -17,18 +13,15 @@ export default function Home() {
         const handleSession = () => {
             getSession().then((loggedInUser) => {
                 if (!loggedInUser) {
-                    console.log("not logged in");
                     sessionStorage.setItem("jwt", "");
                     setUser({ allowed: false, email: "" });
                 } else if (sessionStorage.getItem("jwt") && loggedInUser) {
-                    console.log("setting user");
                     if (loggedInUser?.user?.email?.split("@")[1] === (process.env.NEXT_PUBLIC_AUTHORIZED_DOMAIN ?? "useparagon.com")) {
                         setUser({ allowed: true, email: loggedInUser.user.email });
                     } else {
                         setUser({ allowed: false, email: loggedInUser?.user?.email ?? "" });
                     }
                 } else {
-                    console.log("grabbing jwt");
                     if (loggedInUser?.user?.email) {
                         fetch(process.env.NEXT_PUBLIC_AUTH_BACKEND ?? "", {
                             method: 'POST',
@@ -39,7 +32,6 @@ export default function Home() {
                         }).then((res) => {
                             res.json().then((body) => {
                                 sessionStorage.setItem("jwt", body.jwt);
-                                console.log("jwt set");
                                 if (loggedInUser?.user?.email?.split("@")[1] === (process.env.NEXT_PUBLIC_AUTHORIZED_DOMAIN ?? "useparagon.com")) {
                                     setUser({
                                         allowed: true,
