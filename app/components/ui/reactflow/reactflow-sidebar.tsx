@@ -3,7 +3,9 @@ import { paragon } from "@useparagon/connect";
 import useParagon from "@/app/hooks/useParagon";
 
 export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>, setNodes: any, edges: any }) => {
-	const [sidebarState, setSidebarState] = useState<{ integrations: Array<any>, actions: any, activeDropdown: string }>({ integrations: [], actions: {}, activeDropdown: "" });
+	const [sidebarState, setSidebarState] = useState<{ integrations: Array<any>, actions: any, activeDropdown: string }>({
+		integrations: [], actions: {}, activeDropdown: ""
+	});
 
 	useParagon();
 
@@ -11,12 +13,12 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>
 		fetchActions().then((actions) => {
 			console.log(actions);
 			console.log(paragon.getIntegrationMetadata());
-			setSidebarState({ ...sidebarState, integrations: paragon.getIntegrationMetadata(), actions: actions });
+			setSidebarState((prev) => ({ ...prev, integrations: paragon.getIntegrationMetadata(), actions: actions }));
 		});
 	}, []);
 
 	const toggleDropdown = (integrationName: string) => {
-		setSidebarState({ ...sidebarState, activeDropdown: integrationName });
+		setSidebarState((prev) => ({ ...prev, activeDropdown: prev.activeDropdown === integrationName ? "" : integrationName }));
 	}
 
 	const addNode = () => {
@@ -63,19 +65,19 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>
 			</button>
 			{sidebarState.integrations.map((integration) => {
 				return (
-					<div>
-						<button key={integration.type} className='flex space-x-2 p-2 items-center justify-between w-full border-b-2 border-b-stone-200'
-							onClick={toggleDropdown(integration.type)}>
+					<div key={integration.type}>
+						<button className='flex space-x-2 p-2 items-center justify-between w-full border-b-2 border-b-stone-200'
+							onClick={() => toggleDropdown(integration.type)}>
 							<img src={integration.icon} style={{ maxWidth: "30px" }} />
 							<p>{integration.name} Actions</p>
 							<svg fill="#000000" height="20px" width="20px" version="1.1" id="Layer_1" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_225_" d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"></path> </g></svg>
 						</button>
 						{
 							integration.type === sidebarState.activeDropdown &&
-							sidebarState.actions[integration.type].map((action: any) => {
+							sidebarState.actions[integration.type]?.map((action: any) => {
 								return (
-									<button key={action.funtion.name}>
-										{action.funtion.name}
+									<button className={"w-full"} key={action.function.name}>
+										{action.function.name}
 									</button>
 								);
 							})
