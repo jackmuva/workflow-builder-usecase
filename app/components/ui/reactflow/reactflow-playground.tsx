@@ -8,7 +8,7 @@ function ReactflowPlayground() {
 	const initialNodes = [
 		{
 			id: '1',
-			data: { label: 'Hello' },
+			data: { label: 'Trigger' },
 			position: { x: 0, y: 0 },
 			type: 'input',
 		},
