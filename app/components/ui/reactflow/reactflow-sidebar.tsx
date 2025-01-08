@@ -3,8 +3,21 @@ import { paragon } from "@useparagon/connect";
 import useParagon from "@/app/hooks/useParagon";
 
 export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>, setNodes: any, edges: any }) => {
-	const [actions, setActions] = useState<{ integrations: Array<any>, actions: any }>({ integrations: [], actions: {} });
+	const [sidebarState, setSidebarState] = useState<{ integrations: Array<any>, actions: any, activeDropdown: string }>({ integrations: [], actions: {}, activeDropdown: "" });
+
 	useParagon();
+
+	useEffect(() => {
+		fetchActions().then((actions) => {
+			console.log(actions);
+			console.log(paragon.getIntegrationMetadata());
+			setSidebarState({ ...sidebarState, integrations: paragon.getIntegrationMetadata(), actions: actions });
+		});
+	}, []);
+
+	const toggleDropdown = (integrationName: string) => {
+		setSidebarState({ ...sidebarState, activeDropdown: integrationName });
+	}
 
 	const addNode = () => {
 		setNodes([...nodes, {
@@ -38,13 +51,7 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>
 		return actionBody;
 	}
 
-	useEffect(() => {
-		fetchActions().then((actions) => {
-			console.log(actions);
-			console.log(paragon.getIntegrationMetadata());
-			setActions({ integrations: paragon.getIntegrationMetadata(), actions: actions });
-		});
-	}, []);
+
 
 	return (
 		<div className='basis-1/5 rounded-xl m-1 shadow-lg p-2 flex flex-col items-center space-y-1'>
@@ -54,13 +61,26 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>
 			<button className='border-2 rounded-lg bg-stone-100 py-2 w-11/12' onClick={saveWorkflow}>
 				Save Workflow
 			</button>
-			{actions.integrations.map((integration) => {
+			{sidebarState.integrations.map((integration) => {
 				return (
-					<button className='flex space-x-2 p-2 items-center justify-between w-full border-b-2 border-b-stone-200'>
-						<img src={integration.icon} style={{ maxWidth: "30px" }} />
-						<p>{integration.name} Actions</p>
-						<svg fill="#000000" height="20px" width="20px" version="1.1" id="Layer_1" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_225_" d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"></path> </g></svg>
-					</button>
+					<div>
+						<button key={integration.type} className='flex space-x-2 p-2 items-center justify-between w-full border-b-2 border-b-stone-200'
+							onClick={toggleDropdown(integration.type)}>
+							<img src={integration.icon} style={{ maxWidth: "30px" }} />
+							<p>{integration.name} Actions</p>
+							<svg fill="#000000" height="20px" width="20px" version="1.1" id="Layer_1" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xmlSpace="preserve"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_225_" d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"></path> </g></svg>
+						</button>
+						{
+							integration.type === sidebarState.activeDropdown &&
+							sidebarState.actions[integration.type].map((action: any) => {
+								return (
+									<button key={action.funtion.name}>
+										{action.funtion.name}
+									</button>
+								);
+							})
+						}
+					</div>
 				);
 			})
 			}
