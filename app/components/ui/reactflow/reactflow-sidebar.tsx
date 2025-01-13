@@ -20,10 +20,12 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges, newId }: { nodes: Arr
 		setSidebarState((prev) => ({ ...prev, activeDropdown: prev.activeDropdown === integrationName ? "" : integrationName }));
 	}
 
-	const addNode = (actionName: string) => {
+	const addNode = (actionName: string, action: any) => {
+
+		console.log(action);
 		setNodes([...nodes, {
 			id: String(newId),
-			data: { label: String(newId) + ") " + actionName },
+			data: { label: String(newId) + ") " + actionName, functionData: action },
 			position: { x: (newId * 100) + 100, y: (newId * 100) + 100 },
 			type: 'actionNode'
 		}]);
@@ -50,6 +52,7 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges, newId }: { nodes: Arr
 			headers: headers
 		});
 		const actionBody = await actionResponse.json();
+		console.log(actionBody);
 		return actionBody;
 	}
 

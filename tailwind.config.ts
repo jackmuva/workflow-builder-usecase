@@ -13,6 +13,7 @@ const config: Config = {
       },
     },
     extend: {
+      display: ["group-hover"],
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

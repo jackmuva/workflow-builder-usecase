@@ -15,7 +15,7 @@ export const ActionButton = ({ action, addNode }: { action: any, addNode: any })
 		<div>
 			<button
 				className='border-2 rounded-lg bg-stone-100 py-2 w-full'
-				onClick={() => addNode(parseNames(action.function.name))}>
+				onClick={() => addNode(parseNames(action.function.name), action)}>
 				{parseNames(action.function.name)}
 			</button>
 		</div>

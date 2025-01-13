@@ -9,19 +9,13 @@ function ReactflowPlayground() {
 	const initialNodes = [
 		{
 			id: '0',
-			data: { label: '0) Trigger' },
+			data: { label: 'Trigger' },
 			position: { x: 100, y: 100 },
 			type: 'triggerNode',
-		},
-		{
-			id: '1',
-			data: { label: '1) Slack Send Message' },
-			position: { x: 200, y: 200 },
-			type: 'actionNode'
-		},
+		}
 	];
 
-	const initialEdges = [{ id: '0-1', source: '0', target: '1' }];
+	const initialEdges: Array<{ id: string, source: string, target: string }> = [];
 
 	const [nodes, setNodes] = useState<Array<any>>(initialNodes);
 	const [edges, setEdges] = useState(initialEdges);
