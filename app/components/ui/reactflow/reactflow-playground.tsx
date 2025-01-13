@@ -2,28 +2,30 @@ import { ReactFlow, Controls, Background, applyEdgeChanges, applyNodeChanges, ad
 import '@xyflow/react/dist/style.css';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { ReactflowSidebar } from './reactflow-sidebar';
-import { SalesforceNode } from './nodes/SalesforceNode';
+import { ActionNode } from './nodes/ActionNode';
+import { TriggerNode } from './nodes/TriggerNode';
 
 function ReactflowPlayground() {
 	const initialNodes = [
 		{
-			id: '1',
-			data: { label: 'Trigger' },
-			position: { x: 0, y: 0 },
-			type: 'input',
+			id: '0',
+			data: { label: '0) Trigger' },
+			position: { x: 100, y: 100 },
+			type: 'triggerNode',
 		},
 		{
-			id: '2',
-			data: { label: 'World' },
-			position: { x: 100, y: 100 },
-			type: 'salesforceNode'
+			id: '1',
+			data: { label: '1) Slack Send Message' },
+			position: { x: 200, y: 200 },
+			type: 'actionNode'
 		},
 	];
 
-	const initialEdges = [{ id: '1-2', source: '1', target: '2' }];
+	const initialEdges = [{ id: '0-1', source: '0', target: '1' }];
 
 	const [nodes, setNodes] = useState<Array<any>>(initialNodes);
 	const [edges, setEdges] = useState(initialEdges);
+	const [newId, setNewId] = useState<number>(1);
 
 	useEffect(() => {
 		if (localStorage.getItem("nodes") !== null && localStorage.getItem("edges") !== null) {
@@ -32,8 +34,18 @@ function ReactflowPlayground() {
 		}
 	}, []);
 
+	useEffect(() => {
+		let largest = 0;
+		for (const node of nodes) {
+			if (Number(node.id) > largest) {
+				largest = Number(node.id);
+			}
+		}
+		setNewId(largest + 1);
+	}, [nodes]);
 
-	const nodeTypes = useMemo(() => ({ salesforceNode: SalesforceNode }), []);
+
+	const nodeTypes = useMemo(() => ({ actionNode: ActionNode, triggerNode: TriggerNode }), []);
 	const onNodesChange = useCallback(
 		(changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
 		[],
@@ -48,15 +60,15 @@ function ReactflowPlayground() {
 	);
 
 	return (
-		<div className='flex border-2 bg-stone-50 w-screen min-h-screen z-0 fixed top-20 left-0 '>
-			<ReactFlow className='min-h-screen h-full w-full basis-4/5'
+		<div className='flex border-2 bg-stone-50 w-screen z-0 fixed top-20 left-0 '>
+			<ReactFlow className='min-h-[700px] h-full w-full basis-4/5'
 				nodes={nodes} edges={edges} onConnect={onConnect}
 				onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}
 				nodeTypes={nodeTypes}>
 				<Background />
 				<Controls />
 			</ReactFlow>
-			<ReactflowSidebar nodes={nodes} setNodes={setNodes} edges={edges}></ReactflowSidebar>
+			<ReactflowSidebar nodes={nodes} setNodes={setNodes} edges={edges} newId={newId}></ReactflowSidebar>
 		</div >
 	);
 }

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { paragon } from "@useparagon/connect";
 import useParagon from "@/app/hooks/useParagon";
+import { ActionButton } from "./nodes/ActionButton";
 
-export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>, setNodes: any, edges: any }) => {
+export const ReactflowSidebar = ({ nodes, setNodes, edges, newId }: { nodes: Array<any>, setNodes: any, edges: any, newId: number }) => {
 	const [sidebarState, setSidebarState] = useState<{ integrations: Array<any>, actions: any, activeDropdown: string }>({
 		integrations: [], actions: {}, activeDropdown: ""
 	});
@@ -11,8 +12,6 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>
 
 	useEffect(() => {
 		fetchActions().then((actions) => {
-			console.log(actions);
-			console.log(paragon.getIntegrationMetadata());
 			setSidebarState((prev) => ({ ...prev, integrations: paragon.getIntegrationMetadata(), actions: actions }));
 		});
 	}, []);
@@ -21,11 +20,12 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>
 		setSidebarState((prev) => ({ ...prev, activeDropdown: prev.activeDropdown === integrationName ? "" : integrationName }));
 	}
 
-	const addNode = () => {
+	const addNode = (actionName: string) => {
 		setNodes([...nodes, {
-			id: '3',
-			data: { label: 'New Buddy' },
-			position: { x: 200, y: 200 },
+			id: String(newId),
+			data: { label: String(newId) + ") " + actionName },
+			position: { x: (newId * 100) + 100, y: (newId * 100) + 100 },
+			type: 'actionNode'
 		}]);
 	};
 
@@ -56,16 +56,13 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>
 
 
 	return (
-		<div className='basis-1/5 rounded-xl m-1 shadow-lg p-2 flex flex-col items-center space-y-1'>
-			<button className='border-2 rounded-lg bg-stone-100 py-2 w-11/12' onClick={addNode}>
-				Run Workflow
-			</button>
+		<div className='basis-1/5 rounded-xl m-1 shadow-lg p-2 flex flex-col items-center space-y-1 h-[700px] overflow-y-auto'>
 			<button className='border-2 rounded-lg bg-stone-100 py-2 w-11/12' onClick={saveWorkflow}>
 				Save Workflow
 			</button>
 			{sidebarState.integrations.map((integration) => {
 				return (
-					<div key={integration.type}>
+					<div key={integration.type} className="w-full overflow-scroll">
 						<button className='flex space-x-2 p-2 items-center justify-between w-full border-b-2 border-b-stone-200'
 							onClick={() => toggleDropdown(integration.type)}>
 							<img src={integration.icon} style={{ maxWidth: "30px" }} />
@@ -74,13 +71,12 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges }: { nodes: Array<any>
 						</button>
 						{
 							integration.type === sidebarState.activeDropdown &&
-							sidebarState.actions[integration.type]?.map((action: any) => {
-								return (
-									<button className={"w-full"} key={action.function.name}>
-										{action.function.name}
-									</button>
-								);
-							})
+							<div className="flex flex-col space-y-2 ">
+								{sidebarState.actions[integration.type]?.map((action: any) => {
+									return (
+										<ActionButton key={action.function.name} action={action} addNode={addNode} />);
+								})}
+							</div>
 						}
 					</div>
 				);
