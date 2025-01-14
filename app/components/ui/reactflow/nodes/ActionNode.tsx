@@ -20,6 +20,7 @@ export function ActionNode({ data }: { data: any }) {
 	}, []);
 
 	const onChange = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
+		data.funcProperties = { ...funcProperties, parameters: { ...funcProperties.parameters, [evt.target.name]: evt.target.value } };
 		setFuncProperties(prev => ({ ...prev, parameters: { ...prev.parameters, [evt.target.name]: evt.target.value } }));
 	}, []);
 
@@ -31,7 +32,7 @@ export function ActionNode({ data }: { data: any }) {
 
 		const response = await fetch(url, {
 			method: "POST",
-			body: JSON.stringify(funcProperties),
+			body: JSON.stringify(data.funcProperties),
 			headers: headers
 		});
 
@@ -54,10 +55,10 @@ export function ActionNode({ data }: { data: any }) {
 				</div>
 				{expand &&
 					<div className='flex flex-col space-y-2'>
-						{Object.keys(funcProperties.parameters).map((prop) => {
+						{Object.keys(funcProperties.parameters).map((prop: string) => {
 							return (
 								<label key={prop}>{prop}:
-									<input id="text" name={prop} onChange={onChange} className="p-1 nodrag ml-2 border-2" />
+									<input value={data?.funcProperties?.parameters[prop]} id="text" name={prop} onChange={onChange} className="p-1 nodrag ml-2 border-2" />
 								</label>
 							)
 						})
