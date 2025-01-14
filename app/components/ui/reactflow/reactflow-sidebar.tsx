@@ -3,11 +3,10 @@ import { paragon } from "@useparagon/connect";
 import useParagon from "@/app/hooks/useParagon";
 import { ActionButton } from "./nodes/ActionButton";
 
-export const ReactflowSidebar = ({ nodes, setNodes, edges, newId }: { nodes: Array<any>, setNodes: any, edges: any, newId: number }) => {
+export const ReactflowSidebar = ({ nodes, setNodes, setEdges, edges, newId }: { nodes: Array<any>, setNodes: any, setEdges: any, edges: any, newId: number }) => {
 	const [sidebarState, setSidebarState] = useState<{ integrations: Array<any>, actions: any, activeDropdown: string }>({
 		integrations: [], actions: {}, activeDropdown: ""
 	});
-
 	useParagon();
 
 	useEffect(() => {
@@ -20,12 +19,10 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges, newId }: { nodes: Arr
 		setSidebarState((prev) => ({ ...prev, activeDropdown: prev.activeDropdown === integrationName ? "" : integrationName }));
 	}
 
-	const addNode = (actionName: string, action: any) => {
-
-		console.log(action);
+	const addNode = (actionName: string, action: any, pic: string) => {
 		setNodes([...nodes, {
 			id: String(newId),
-			data: { label: String(newId) + ") " + actionName, functionData: action },
+			data: { label: String(newId) + ") " + actionName, pic: pic, functionData: action },
 			position: { x: (newId * 100) + 100, y: (newId * 100) + 100 },
 			type: 'actionNode'
 		}]);
@@ -34,6 +31,27 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges, newId }: { nodes: Arr
 	const saveWorkflow = () => {
 		localStorage.setItem("nodes", JSON.stringify(nodes));
 		localStorage.setItem("edges", JSON.stringify(edges));
+	}
+
+	const clearWorkflow = () => {
+		localStorage.clear();
+		setNodes([]);
+		setEdges([]);
+	}
+
+	const triggerWorkflow = async () => {
+		const headers = new Headers();
+		headers.append("Content-Type", "application/json");
+		headers.append("Authorization", "Bearer " + sessionStorage.getItem("jwt"));
+
+
+		const response = await fetch(window.location.href + "/api/workflow", {
+			method: "POST",
+			headers: headers,
+			body: JSON.stringify({ nodes: nodes, edges: edges })
+		});
+		const body = await response.json();
+		console.log(body);
 	}
 
 	const fetchActions = async () => {
@@ -52,7 +70,6 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges, newId }: { nodes: Arr
 			headers: headers
 		});
 		const actionBody = await actionResponse.json();
-		console.log(actionBody);
 		return actionBody;
 	}
 
@@ -60,8 +77,14 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges, newId }: { nodes: Arr
 
 	return (
 		<div className='basis-1/5 rounded-xl m-1 shadow-lg p-2 flex flex-col items-center space-y-1 h-[700px] overflow-y-auto'>
-			<button className='border-2 rounded-lg bg-stone-100 py-2 w-11/12' onClick={saveWorkflow}>
+			<button className='border-2 rounded-lg bg-stone-100 hover:bg-stone-300 py-2 w-11/12' onClick={saveWorkflow}>
 				Save Workflow
+			</button>
+			<button className='border-2 rounded-lg bg-red-200  hover:bg-red-400 py-2 w-11/12' onClick={clearWorkflow}>
+				Clear Workflow
+			</button>
+			<button className='border-2 rounded-lg bg-green-200 hover:bg-green-400 py-2 w-11/12' onClick={triggerWorkflow}>
+				Run Workflow
 			</button>
 			{sidebarState.integrations.map((integration) => {
 				return (
@@ -77,7 +100,7 @@ export const ReactflowSidebar = ({ nodes, setNodes, edges, newId }: { nodes: Arr
 							<div className="flex flex-col space-y-2 ">
 								{sidebarState.actions[integration.type]?.map((action: any) => {
 									return (
-										<ActionButton key={action.function.name} action={action} addNode={addNode} />);
+										<ActionButton key={action.function.name} action={action} addNode={addNode} pic={integration.icon} />);
 								})}
 							</div>
 						}

@@ -6,6 +6,7 @@ export function ActionNode({ data }: { data: any }) {
 	const [funcProperties, setFuncProperties] = useState<{ action: string, parameters: any, output: string }>({
 		action: data.functionData.function.name, parameters: {}, output: ""
 	});
+	const [expand, setExpand] = useState<boolean>(false);
 
 	useEffect(() => {
 		const props = { action: data.functionData.function.name, parameters: {}, output: "" };
@@ -36,16 +37,22 @@ export function ActionNode({ data }: { data: any }) {
 
 		const body = await response.json();
 
-		console.log(JSON.stringify(body.body).replaceAll(",", ",\n"));
 		setFuncProperties(prev => ({ ...prev, output: JSON.stringify(body.body).replaceAll(",", ",\n") }));
+	}
+
+	const toggleExpand = () => {
+		setExpand(!expand);
 	}
 
 	return (
 		<>
-			<Handle type="target" position={Position.Top} />
-			<div className='flex flex-col rounded-lg border-2 bg-stone-100 p-2 group space-y-2'>
-				<div className='font-bold text-blue-700'>{data.label}</div>
-				<div className='hidden group-hover:block'>
+			{data.label.charAt(0) !== '1' && <Handle type="target" position={Position.Top} />}
+			<div className='flex flex-col rounded-lg border-2 bg-stone-100 p-2 space-y-2'>
+				<div className='flex space-x-2'>
+					<img src={data.pic} style={{ maxWidth: "30px" }} />
+					<button onClick={toggleExpand} className='font-bold text-blue-700'>{data.label}</button>
+				</div>
+				{expand &&
 					<div className='flex flex-col space-y-2'>
 						{Object.keys(funcProperties.parameters).map((prop) => {
 							return (
@@ -57,13 +64,12 @@ export function ActionNode({ data }: { data: any }) {
 						}
 						<button onClick={testStep} className='border-stone-800 bg-green-200 hover:bg-green-400 rounded-lg border-2 p-1'> Test Step </button>
 						{funcProperties.output !== "" &&
-							<textarea readOnly className='p-1 w-96 whitespace-pre-line z-30 h-96 overflow-scroll'>
-								{funcProperties.output}
-							</textarea>
+							<textarea readOnly className='p-1 w-96 whitespace-pre-line z-30 h-96 overflow-scroll'
+								value={funcProperties.output} />
 						}
-					</div>
 
-				</div>
+					</div>
+				}
 			</div>
 			<Handle type="source" position={Position.Bottom} id="a" />
 		</>

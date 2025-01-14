@@ -6,20 +6,9 @@ import { ActionNode } from './nodes/ActionNode';
 import { TriggerNode } from './nodes/TriggerNode';
 
 function ReactflowPlayground() {
-	const initialNodes = [
-		{
-			id: '0',
-			data: { label: 'Trigger' },
-			position: { x: 100, y: 100 },
-			type: 'triggerNode',
-		}
-	];
-
-	const initialEdges: Array<{ id: string, source: string, target: string }> = [];
-
-	const [nodes, setNodes] = useState<Array<any>>(initialNodes);
-	const [edges, setEdges] = useState(initialEdges);
-	const [newId, setNewId] = useState<number>(1);
+	const [nodes, setNodes] = useState<Array<any>>([]);
+	const [edges, setEdges] = useState<Array<{ id: string, source: string, target: string }>>([]);
+	const [newId, setNewId] = useState<number>(0);
 
 	useEffect(() => {
 		if (localStorage.getItem("nodes") !== null && localStorage.getItem("edges") !== null) {
@@ -53,6 +42,7 @@ function ReactflowPlayground() {
 		[],
 	);
 
+
 	return (
 		<div className='flex border-2 bg-stone-50 w-screen z-0 fixed top-20 left-0 '>
 			<ReactFlow className='min-h-[700px] h-full w-full basis-4/5'
@@ -62,7 +52,7 @@ function ReactflowPlayground() {
 				<Background />
 				<Controls />
 			</ReactFlow>
-			<ReactflowSidebar nodes={nodes} setNodes={setNodes} edges={edges} newId={newId}></ReactflowSidebar>
+			<ReactflowSidebar nodes={nodes} setNodes={setNodes} setEdges={setEdges} edges={edges} newId={newId}></ReactflowSidebar>
 		</div >
 	);
 }

@@ -55,7 +55,7 @@ export default function Home() {
     function toggleDropdown() {
         setIntgDropdown(!intgDropdown);
     }
-    console.log(user);
+
     return (
         <main className="pt-5 flex justify-center items-center background-gradient">
             <div className="flex-col space-y-2 lg:space-y-10 w-[90%] lg:w-[60rem]">
