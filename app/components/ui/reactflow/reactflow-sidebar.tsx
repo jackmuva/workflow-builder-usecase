@@ -76,15 +76,16 @@ export const ReactflowSidebar = ({ nodes, setNodes, setEdges, edges, newId }: { 
 
 	return (
 		<div className='basis-1/5 m-1 p-2 flex flex-col items-center space-y-1 h-[800px] overflow-y-auto border-l-2'>
-			<button className='border-2 rounded-lg bg-stone-100 hover:bg-stone-300 py-2 w-3/4 text-sm font-bold' onClick={saveWorkflow}>
-				Save Workflow
-			</button>
-			<button className='border-2 rounded-lg bg-red-200  hover:bg-red-400 py-2 w-3/4 text-sm font-bold' onClick={clearWorkflow}>
-				Clear Workflow
-			</button>
-			<button className='border-2 rounded-lg bg-green-200 hover:bg-green-400 py-2 w-3/4 text-sm font-bold' onClick={triggerWorkflow}>
-				Run Workflow
-			</button>
+			<div className="flex justify-between space-x-1">
+				<button className='border-2 rounded-lg bg-green-200 hover:bg-green-400 p-2 text-sm font-bold flex justify-center items-center' onClick={triggerWorkflow}>
+					<svg className="mr-1" viewBox="0 0 24 24" height="20px" width="20px" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M16.6582 9.28638C18.098 10.1862 18.8178 10.6361 19.0647 11.2122C19.2803 11.7152 19.2803 12.2847 19.0647 12.7878C18.8178 13.3638 18.098 13.8137 16.6582 14.7136L9.896 18.94C8.29805 19.9387 7.49907 20.4381 6.83973 20.385C6.26501 20.3388 5.73818 20.0469 5.3944 19.584C5 19.053 5 18.1108 5 16.2264V7.77357C5 5.88919 5 4.94701 5.3944 4.41598C5.73818 3.9531 6.26501 3.66111 6.83973 3.6149C7.49907 3.5619 8.29805 4.06126 9.896 5.05998L16.6582 9.28638Z" stroke="#000000" stroke-width="2" stroke-linejoin="round"></path> </g></svg>
+					Run Workflow
+				</button>
+				<button className='border-2 rounded-lg bg-red-200  hover:bg-red-400 p-2 text-sm font-bold flex items-center justify-center' onClick={clearWorkflow}>
+					<svg className="mr-1" viewBox="0 0 24 24" height="20px" width="20px" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 12L14 16M14 12L10 16M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+					Clear Workflow
+				</button>
+			</div>
 			{sidebarState.integrations.map((integration) => {
 				const integrationEnabled = paragonUser?.authenticated && paragonUser.integrations[integration.type]?.enabled;
 				return (
