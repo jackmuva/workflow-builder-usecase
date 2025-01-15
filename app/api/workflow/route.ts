@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
 				queue.push('1');
 				while (queue.length > 0) {
 					const nodeId = queue.shift();
+					console.log(nodeId);
 					const selectedNode = nodeMap.get(nodeId);
 					let res = await performWorkflowAction(resMap, token, selectedNode)
 					resMap.set(nodeId, res);
@@ -38,7 +39,8 @@ export async function POST(request: NextRequest) {
 						}
 					}
 				}
-				console.log(resMap);
+				console.log(contents);
+				//console.log(resMap);
 
 				return NextResponse.json(
 					{ status: 200, body: contents },

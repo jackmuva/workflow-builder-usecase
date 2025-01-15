@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { performWorkflowAction } from "../workflow/route";
 
 export async function POST(request: NextRequest) {
 	try {
@@ -6,11 +7,44 @@ export async function POST(request: NextRequest) {
 		const headers = request.headers;
 		if (headers.get("authorization")) {
 			const token = headers.get("authorization")?.split(" ")[1];
+			const nodes = contents.nodes;
+			const edges = contents.edges;
+			const selectedNodeId = contents.selectedNodeId;
 			if (token) {
-				const actionBody = await performAction(token, contents);
+				const edgeMap = new Map();
+				const nodeMap = new Map();
+				const resMap = new Map();
+				const queue = [];
+
+				for (const edge of edges) {
+					if (edgeMap.has(edge.source)) {
+						edgeMap.set(edge.source, [...edgeMap.get(edge.source), edge.target]);
+					} else {
+						edgeMap.set(edge.source, [edge.target]);
+					}
+				}
+				for (const node of nodes) {
+					nodeMap.set(node.id, node.data.funcProperties);
+				}
+
+				queue.push('1');
+				while (queue.length > 0) {
+					const nodeId = queue.shift();
+					const selectedNode = nodeMap.get(nodeId);
+					let res = await performWorkflowAction(resMap, token, selectedNode)
+					resMap.set(nodeId, res);
+					if (edgeMap.has(nodeId)) {
+						for (const id of edgeMap.get(nodeId)) {
+							queue.push(id);
+						}
+					}
+				}
+				console.log(resMap);
+
 				return NextResponse.json(
-					{ status: 200, body: actionBody },
+					{ status: 200, body: resMap.get(selectedNodeId) },
 				);
+
 			}
 		}
 	} catch (error) {

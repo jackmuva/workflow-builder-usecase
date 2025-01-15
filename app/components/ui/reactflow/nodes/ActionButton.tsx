@@ -14,9 +14,9 @@ export const ActionButton = ({ action, addNode, pic }: { action: any, addNode: a
 	return (
 		<div>
 			<button
-				className='border-2 rounded-lg bg-stone-100 p-2 w-full text-sm'
+				className='text-sm font-semibold pl-1 border-l-2 border-b-2 text-stone-600 hover:text-stone-400'
 				onClick={() => addNode(parseNames(action.function.name), action, pic)}>
-				{parseNames(action.function.name)}
+				+ {parseNames(action.function.name)}
 			</button>
 		</div>
 	);

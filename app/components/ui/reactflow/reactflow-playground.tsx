@@ -4,18 +4,22 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { ReactflowSidebar } from './reactflow-sidebar';
 import { ActionNode } from './nodes/ActionNode';
 import { TriggerNode } from './nodes/TriggerNode';
+import { useShallow } from 'zustand/react/shallow';
+import useStore from '@/app/store/store';
+
+const selector = (state: any) => ({
+	nodes: state.nodes,
+	edges: state.edges,
+	onNodesChange: state.onNodesChange,
+	onEdgesChange: state.onEdgesChange,
+	onConnect: state.onConnect,
+});
 
 function ReactflowPlayground() {
-	const [nodes, setNodes] = useState<Array<any>>([]);
-	const [edges, setEdges] = useState<Array<{ id: string, source: string, target: string }>>([]);
+	const { nodes, edges, onNodesChange, onEdgesChange, onConnect } = useStore(
+		useShallow(selector),
+	);
 	const [newId, setNewId] = useState<number>(0);
-
-	useEffect(() => {
-		if (localStorage.getItem("nodes") !== null && localStorage.getItem("edges") !== null) {
-			setNodes(JSON.parse(localStorage.getItem("nodes") ?? ""));
-			setEdges(JSON.parse(localStorage.getItem("edges") ?? ""));
-		}
-	}, []);
 
 	useEffect(() => {
 		let largest = 0;
@@ -29,19 +33,6 @@ function ReactflowPlayground() {
 
 
 	const nodeTypes = useMemo(() => ({ actionNode: ActionNode, triggerNode: TriggerNode }), []);
-	const onNodesChange = useCallback(
-		(changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
-		[],
-	);
-	const onEdgesChange = useCallback(
-		(changes: any) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-		[],
-	);
-	const onConnect = useCallback(
-		(params: any) => setEdges((eds) => addEdge(params, eds)),
-		[],
-	);
-
 
 	return (
 		<div className='flex border-2 bg-stone-50 w-screen z-0 fixed top-8 left-0 '>
@@ -53,7 +44,7 @@ function ReactflowPlayground() {
 				<Background />
 				<Controls />
 			</ReactFlow>
-			<ReactflowSidebar nodes={nodes} setNodes={setNodes} setEdges={setEdges} edges={edges} newId={newId}></ReactflowSidebar>
+			<ReactflowSidebar nodes={nodes} edges={edges} newId={newId}></ReactflowSidebar>
 		</div >
 	);
 }
