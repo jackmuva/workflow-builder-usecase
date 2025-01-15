@@ -3,25 +3,19 @@ import { Handle, Position } from '@xyflow/react';
 import { useState } from 'react';
 
 export function ActionNode({ data }: { data: any }) {
-	const [funcProperties, setFuncProperties] = useState<{ action: string, parameters: any, output: string }>({
-		action: data.functionData.function.name, parameters: {}, output: ""
-	});
 	const [expand, setExpand] = useState<boolean>(false);
+	const [params, setParams] = useState<{ parameters: any, output: string }>({ parameters: {}, output: "" });
 
 	useEffect(() => {
-		const props = { action: data.functionData.function.name, parameters: {}, output: "" };
-		if (data.functionData.function.parameters) {
-			for (const property of Object.keys(data.functionData.function.parameters.properties)) {
-				//@ts-ignore
-				props.parameters[property] = "";
-			}
-			setFuncProperties(props);
+		data.funcProperties = { action: data.functionData.function.name, parameters: {}, output: "" };
+		for (const param of Object.keys(data.functionData.function.parameters.properties)) {
+			data.funcProperties.parameters[param] = "";
 		}
 	}, []);
 
 	const onChange = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
-		data.funcProperties = { ...funcProperties, parameters: { ...funcProperties.parameters, [evt.target.name]: evt.target.value } };
-		setFuncProperties(prev => ({ ...prev, parameters: { ...prev.parameters, [evt.target.name]: evt.target.value } }));
+		data.funcProperties.parameters = { ...data.funcProperties.parameters, [evt.target.name]: evt.target.value };
+		setParams((prev) => ({ ...prev, parameters: data.funcProperties.parameters }));
 	}, []);
 
 	const testStep = async () => {
@@ -38,7 +32,8 @@ export function ActionNode({ data }: { data: any }) {
 
 		const body = await response.json();
 
-		setFuncProperties(prev => ({ ...prev, output: JSON.stringify(body.body).replaceAll(",", ",\n") }));
+		data.funcProperties = { ...data.funcProperties, output: JSON.stringify(body.body).replaceAll(",", ",\n") };
+		setParams((prev) => ({ ...prev, output: data.funcProperties.output }));
 	}
 
 	const toggleExpand = () => {
@@ -55,7 +50,7 @@ export function ActionNode({ data }: { data: any }) {
 				</div>
 				{expand &&
 					<div className='flex flex-col space-y-2'>
-						{Object.keys(funcProperties.parameters).map((prop: string) => {
+						{Object.keys(data.functionData.function.parameters.properties).map((prop: string) => {
 							return (
 								<label key={prop}>{prop}:
 									<input value={data?.funcProperties?.parameters[prop]} id="text" name={prop} onChange={onChange} className="p-1 nodrag ml-2 border-2" />
@@ -64,9 +59,9 @@ export function ActionNode({ data }: { data: any }) {
 						})
 						}
 						<button onClick={testStep} className='border-stone-800 bg-green-200 hover:bg-green-400 rounded-lg border-2 p-1'> Test Step </button>
-						{funcProperties.output !== "" &&
+						{data.funcProperties.output !== "" &&
 							<textarea readOnly className='p-1 w-96 whitespace-pre-line z-30 h-96 overflow-scroll'
-								value={funcProperties.output} />
+								value={data.funcProperties.output} />
 						}
 
 					</div>

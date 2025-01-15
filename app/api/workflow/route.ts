@@ -31,7 +31,8 @@ export async function POST(request: NextRequest) {
 				while (queue.length > 0) {
 					const nodeId = queue.shift();
 					const selectedNode = nodeMap.get(nodeId);
-					resMap.set(nodeId, performAction(token, selectedNode));
+					let res = await performAction(token, selectedNode)
+					resMap.set(nodeId, res);
 					console.log(nodeId);
 					if (edgeMap.has(nodeId)) {
 						for (const id of edgeMap.get(nodeId)) {
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
 						}
 					}
 				}
+				console.log(resMap);
 
 				return NextResponse.json(
 					{ status: 200, body: contents },

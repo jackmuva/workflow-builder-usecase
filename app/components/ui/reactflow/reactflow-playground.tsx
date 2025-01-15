@@ -48,7 +48,8 @@ function ReactflowPlayground() {
 			<ReactFlow className='min-h-[700px] h-full w-full basis-4/5'
 				nodes={nodes} edges={edges} onConnect={onConnect}
 				onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}
-				nodeTypes={nodeTypes}>
+				nodeTypes={nodeTypes}
+				zoomOnScroll={false}>
 				<Background />
 				<Controls />
 			</ReactFlow>

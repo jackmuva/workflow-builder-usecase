@@ -4,7 +4,6 @@ export async function POST(request: NextRequest) {
 	try {
 		const contents = await request.json();
 		const headers = request.headers;
-		console.log(contents);
 		if (headers.get("authorization")) {
 			const token = headers.get("authorization")?.split(" ")[1];
 			if (token) {
@@ -24,6 +23,17 @@ export async function POST(request: NextRequest) {
 }
 
 export async function performAction(jwt: string, contents: { action: string, parameters: any, output?: any }) {
+	const toDel = [];
+	for (const param of Object.keys(contents.parameters)) {
+		if (contents.parameters[param] === '') {
+			toDel.push(param);
+		}
+	}
+	for (const param of toDel) {
+		delete contents.parameters[param];
+	}
+
+
 	const actionsUrl = "https://actionkit.useparagon.com/projects/" + process.env.NEXT_PUBLIC_PARAGON_PROJECT_ID
 	const actionHeaders = new Headers();
 	actionHeaders.append("Content-Type", "application/json");
