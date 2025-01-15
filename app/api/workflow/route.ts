@@ -4,7 +4,6 @@ import { performAction } from "../test-step/route";
 export async function POST(request: NextRequest) {
 	try {
 		const contents = await request.json();
-		console.log(contents);
 		const headers = request.headers;
 		if (headers.get("authorization")) {
 			const token = headers.get("authorization")?.split(" ")[1];
@@ -31,9 +30,8 @@ export async function POST(request: NextRequest) {
 				while (queue.length > 0) {
 					const nodeId = queue.shift();
 					const selectedNode = nodeMap.get(nodeId);
-					let res = await performAction(token, selectedNode)
+					let res = await performWorkflowAction(resMap, token, selectedNode)
 					resMap.set(nodeId, res);
-					console.log(nodeId);
 					if (edgeMap.has(nodeId)) {
 						for (const id of edgeMap.get(nodeId)) {
 							queue.push(id);
@@ -57,16 +55,26 @@ export async function POST(request: NextRequest) {
 }
 
 export const performWorkflowAction = async (resMap: Map<string, any>, token: string, contents: { action: string, parameters: any, output?: any }) => {
-	for (let param of contents.parameters) {
-		const matches = param.match(/\{(.*?)\}/);
+	for (let param of Object.keys(contents.parameters)) {
+		const matches = contents.parameters[param].match(/\{(.*?)\}/);
 		if (matches) {
 			const variableString = matches[1];
 			const variableElements = variableString.split('.');
 			if (resMap.has(variableElements[0])) {
-				param = param.replace("{" + variableString + "}", resMap.get(variableElements[0]));
+				let replacement = resMap.get(variableElements[0]);
+				variableElements.shift();
+				while (variableElements.length > 0) {
+					let index = variableElements.shift();
+					if (index) {
+						//@ts-ignore
+						replacement = replacement[index];
+					}
+				}
+				contents.parameters[param] = contents.parameters[param].replace("{" + variableString + "}", replacement);
 			}
 		}
 
 	}
-	return performAction(token, contents);
+	const resBody = await performAction(token, contents);
+	return resBody;
 }
