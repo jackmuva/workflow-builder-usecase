@@ -43,10 +43,10 @@ export function ActionNode({ data }: { data: any }) {
 	return (
 		<>
 			{data.label.charAt(0) !== '1' && <Handle type="target" position={Position.Top} />}
-			<div className='flex flex-col rounded-lg border-2 bg-stone-100 p-2 space-y-2'>
+			<div className='flex flex-col rounded-lg border-2 bg-stone-100 p-4 space-y-2'>
 				<div className='flex space-x-2'>
 					<img src={data.pic} style={{ maxWidth: "30px" }} />
-					<button onClick={toggleExpand} className='font-bold text-blue-700'>{data.label}</button>
+					<button onClick={toggleExpand} className='font-bold text-stone-600'>{data.label}</button>
 				</div>
 				{expand &&
 					<div className='flex flex-col space-y-2'>

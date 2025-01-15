@@ -44,8 +44,8 @@ function ReactflowPlayground() {
 
 
 	return (
-		<div className='flex border-2 bg-stone-50 w-screen z-0 fixed top-20 left-0 '>
-			<ReactFlow className='min-h-[700px] h-full w-full basis-4/5'
+		<div className='flex border-2 bg-stone-50 w-screen z-0 fixed top-8 left-0 '>
+			<ReactFlow className='min-h-[800px] h-full w-full basis-4/5'
 				nodes={nodes} edges={edges} onConnect={onConnect}
 				onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}
 				nodeTypes={nodeTypes}
