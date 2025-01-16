@@ -128,6 +128,11 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 		setSidebarState((prev) => ({ ...prev, output: selectedNode.data.funcProperties.output }));
 	}
 
+	const formatCamelCase = (camelStr: string) => {
+		const result = camelStr.replace(/([A-Z])/g, " $1");
+		return result.charAt(0).toUpperCase() + result.slice(1);
+	}
+
 	return (
 		<div className='basis-1/5 m-1 p-2 flex flex-col items-center space-y-1 h-[800px] overflow-y-auto border-l-2'>
 			<div className="flex justify-between space-x-4">
@@ -178,7 +183,7 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 					<div className='flex flex-col space-y-2 '>
 						{Object.keys(selectedNode?.data?.functionData?.function.parameters.properties).map((prop: string) => {
 							return (
-								<label key={prop}>{prop}:
+								<label key={prop}>{formatCamelCase(prop)}:
 									<input value={selectedNode.data?.funcProperties?.parameters[prop]} onChange={onChange} id="text" name={prop} className="rounded-lg p-1 nodrag ml-2 border-2" />
 								</label>
 							)
