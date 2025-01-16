@@ -22,7 +22,6 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 	}
 
 	useEffect(() => {
-		console.log(paragonUser);
 		fetchActions().then((actions) => {
 			fetchIntegrationMetadata().then((metadata: any) => {
 				setSidebarState((prev) => ({ ...prev, integrations: metadata, actions: actions }));
