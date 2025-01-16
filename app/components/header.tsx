@@ -2,6 +2,7 @@
 import React from "react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
+import { UrlBar } from "./ui/url-bar";
 
 interface ChildProps {
     toggleDown: boolean,
@@ -11,8 +12,9 @@ interface ChildProps {
 const Header: React.FC<ChildProps> = (props) => {
 
     return (
-        <div className={props.email ? "bg-stone-100 absolute top-0 left-0 w-screen z-20 py-2 md:px-20 items-center justify-between font-['Helvetica'] text-sm flex flex-row-reverse" :
+        <div className={props.email ? "bg-stone-100 absolute top-0 left-0 w-screen z-20 pt-10 pb-2 md:px-20 items-center justify-between font-['Helvetica'] text-sm flex flex-row-reverse" :
             "absolute top-0 left-0 w-screen z-20 py-8 md:px-40 items-center justify-between font-['Helvetica'] text-sm flex flex-row-reverse"}>
+            {props.email && <UrlBar />}
             {!props.email && <>
                 <a
                     href="https://www.useparagon.com/"
