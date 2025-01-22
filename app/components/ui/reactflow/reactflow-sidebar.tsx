@@ -61,6 +61,7 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 		});
 		const body = await response.json();
 		console.log(body);
+		setSidebarState((prev) => ({ ...prev, output: JSON.stringify(body.body).replaceAll(",", ",\n") }));
 	}
 
 	const fetchIntegrationMetadata = async () => {
@@ -97,10 +98,12 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 	}
 
 	const closeNodeMenu = () => {
+		//@ts-ignore
 		clearSelectedNode([]);
 	}
 
 	const onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+		//@ts-ignore
 		selectedNode.data.funcProperties.parameters = { ...selectedNode.data.funcProperties.parameters, [evt.target.name]: evt.target.value };
 		setSidebarState((prev) => ({ ...prev, paramInputs: { ...prev.paramInputs, [evt.target.name]: evt.target.value } }));
 	};
@@ -124,7 +127,9 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 
 		const body = await response.json();
 
+		//@ts-ignore
 		selectedNode.data.funcProperties = { ...selectedNode.data.funcProperties, output: JSON.stringify(body.body).replaceAll(",", ",\n") };
+		//@ts-ignore
 		setSidebarState((prev) => ({ ...prev, output: selectedNode.data.funcProperties.output }));
 	}
 
@@ -205,6 +210,17 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 
 				</div>
 			}
+			{sidebarState.output !== "" &&
+				<div className="flex flex-col space-y-1 shadow-md p-1 border-1 bg-stone-50 absolute bottom-5 w-72 right-5 ">
+					<div className="flex justify-between">
+						<div className="font-semibold text-sm">Last Test Output:</div>
+						<button onClick={clearOutput}>x</button>
+					</div>
+					<textarea readOnly className='w-full p-1 whitespace-pre-line z-30 h-96 overflow-scroll'
+						value={sidebarState.output} />
+				</div>
+			}
+
 			<div className="text-sm text-stone-400 pt-6 text-center">Integration actions powered by Paragon</div>
 		</div >
 	);

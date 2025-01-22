@@ -39,11 +39,10 @@ export async function POST(request: NextRequest) {
 						}
 					}
 				}
-				console.log(contents);
-				//console.log(resMap);
+				console.log(resMap);
 
 				return NextResponse.json(
-					{ status: 200, body: contents },
+					{ status: 200, body: Object.fromEntries(resMap) },
 				);
 			}
 		}
