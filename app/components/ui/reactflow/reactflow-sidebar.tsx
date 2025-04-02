@@ -139,7 +139,7 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 	}
 
 	return (
-		<div className='basis-1/5 m-1 p-2 flex flex-col items-center space-y-1 h-[800px] overflow-y-auto border-l-2'>
+		<div className='basis-1/4 m-1 p-2 flex flex-col items-center space-y-1 h-[800px] overflow-y-auto border-l-2'>
 			<div className="flex justify-between space-x-4">
 				<button className='border-2 rounded-lg bg-green-200 hover:bg-green-400 p-2 text-sm font-bold flex justify-center items-center' onClick={triggerWorkflow}>
 					<svg className="mr-1" viewBox="0 0 24 24" height="20px" width="20px" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M16.6582 9.28638C18.098 10.1862 18.8178 10.6361 19.0647 11.2122C19.2803 11.7152 19.2803 12.2847 19.0647 12.7878C18.8178 13.3638 18.098 13.8137 16.6582 14.7136L9.896 18.94C8.29805 19.9387 7.49907 20.4381 6.83973 20.385C6.26501 20.3388 5.73818 20.0469 5.3944 19.584C5 19.053 5 18.1108 5 16.2264V7.77357C5 5.88919 5 4.94701 5.3944 4.41598C5.73818 3.9531 6.26501 3.66111 6.83973 3.6149C7.49907 3.5619 8.29805 4.06126 9.896 5.05998L16.6582 9.28638Z" stroke="#000000" strokeWidth="2" strokeLinejoin="round"></path> </g></svg>
@@ -168,7 +168,7 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 						{
 							integration.type === sidebarState.activeDropdown &&
 							<div className="flex flex-col space-y-2 mt-2">
-								{sidebarState.actions[integration.type]?.map((action: any) => {
+								{sidebarState.actions.actions[integration.type]?.map((action: any) => {
 									return (
 										<ActionButton key={action.function.name} action={action} addNode={addNode} pic={integration.icon} />);
 								})}
@@ -196,7 +196,7 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 						}
 						<button className='bg-green-200 hover:bg-green-400 rounded-lg border-2 p-1' onClick={testStep}> Test Step </button>
 						{sidebarState.output !== "" &&
-							<div className="flex flex-col space-y-1 shadow-md p-1 border-1 bg-stone-50 absolute bottom-5 w-72 right-5 ">
+							<div className="flex flex-col space-y-1 shadow-md p-1 border-1 bg-stone-50 absolute bottom-5 w-96 right-5 ">
 								<div className="flex justify-between">
 									<div className="font-semibold text-sm">Last Test Output:</div>
 									<button onClick={clearOutput}>x</button>
@@ -211,7 +211,7 @@ export const ReactflowSidebar = ({ nodes, edges, newId }: { nodes: Array<any>, e
 				</div>
 			}
 			{sidebarState.output !== "" &&
-				<div className="flex flex-col space-y-1 shadow-md p-1 border-1 bg-stone-50 absolute bottom-5 w-72 right-5 ">
+				<div className="flex flex-col space-y-1 shadow-md p-1 border-1 bg-stone-50 absolute bottom-5 w-96 right-5 ">
 					<div className="flex justify-between">
 						<div className="font-semibold text-sm">Last Test Output:</div>
 						<button onClick={clearOutput}>x</button>
